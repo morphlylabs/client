@@ -46,12 +46,15 @@ export default async function ChatPage({ params }: ChatPageProps) {
     (asset) => asset.format === "stl",
   );
 
+  const code = latestDocument?.content ?? undefined;
+
   return (
     <>
       <Chat
         id={chat.id}
         initialMessages={uiMessages}
         initialAsset={stlAsset}
+        code={code}
         autoResume={true}
       />
       <DataStreamHandler />
