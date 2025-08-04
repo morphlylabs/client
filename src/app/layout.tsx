@@ -25,7 +25,7 @@ export default async function RootLayout({
       <body>
         {session ? <AuthenticatedNavbar /> : <GuestNavbar />}
         <main>{children}</main>
-        <Toaster />
+        <Toaster position="bottom-left" />
       </body>
     </html>
   );
