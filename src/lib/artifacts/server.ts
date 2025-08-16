@@ -7,6 +7,7 @@ import type { UIMessageStreamWriter } from 'ai';
 import type { ChatMessage } from '~/lib/types';
 import type { Session } from '~/lib/auth';
 import { executeDocumentCodeAndPopulateUrl } from '../../app/(chat)/actions';
+import { v4 } from 'uuid';
 
 export type ArtifactKind = 'code';
 
@@ -36,7 +37,7 @@ export interface UpdateDocumentCallbackProps {
 export interface DocumentHandler<T = ArtifactKind> {
   kind: T;
   onCreateDocument: (args: CreateDocumentCallbackProps) => Promise<Document>;
-  onUpdateDocument: (args: UpdateDocumentCallbackProps) => Promise<void>;
+  onUpdateDocument: (args: UpdateDocumentCallbackProps) => Promise<Document>;
 }
 
 export function createDocumentHandler<T extends ArtifactKind>(config: {
@@ -76,9 +77,11 @@ export function createDocumentHandler<T extends ArtifactKind>(config: {
         session: args.session,
       });
 
+      const id = v4();
+
       if (args.session?.user.id) {
         await createDocument({
-          id: args.document.id,
+          id,
           chatId: args.document.chatId,
           title: args.document.title,
           content: draftContent,
@@ -87,7 +90,7 @@ export function createDocumentHandler<T extends ArtifactKind>(config: {
         });
       }
 
-      return;
+      return await executeDocumentCodeAndPopulateUrl(id);
     },
   };
 }

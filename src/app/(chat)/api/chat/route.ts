@@ -93,7 +93,7 @@ export async function POST(request: Request) {
         const result = streamText({
           model: myProvider.languageModel('chat-model'),
           messages: convertToModelMessages(uiMessages),
-          experimental_activeTools: ['createDocument'],
+          experimental_activeTools: ['createDocument', 'updateDocument'],
           tools: {
             createDocument: createDocument({
               session,

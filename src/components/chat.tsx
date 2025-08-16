@@ -261,6 +261,28 @@ export function Chat({
                           );
                         }
                         return null;
+                      case 'tool-updateDocument':
+                        if (part.state === 'input-available') {
+                          return <p key={part.toolCallId}>Updating asset...</p>;
+                        } else if (
+                          part.state === 'output-available' &&
+                          part.output.id
+                        ) {
+                          return (
+                            <DocumentToolResult
+                              key={part.toolCallId}
+                              result={part.output}
+                            />
+                          );
+                        } else if (part.state === 'output-error') {
+                          return (
+                            <div key={part.toolCallId}>
+                              <X className="mr-1 inline h-4 w-4 text-red-500" />
+                              An error occurred. Please try again.
+                            </div>
+                          );
+                        }
+                        return null;
                       default:
                         return null;
                     }
