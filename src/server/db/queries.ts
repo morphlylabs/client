@@ -6,8 +6,11 @@ import type { ArtifactKind } from '~/lib/artifacts/server';
 import { ChatSDKError } from '~/lib/errors';
 import { eq } from 'drizzle-orm';
 import { v4 } from 'uuid';
+import { requireUser } from '~/lib/require-user';
 
 export const getChatById = async (id: string) => {
+  await requireUser();
+
   return await db.query.chat.findFirst({
     where: (chat, { eq }) => eq(chat.id, id),
     with: {
@@ -23,6 +26,8 @@ export const getChatById = async (id: string) => {
 };
 
 export const getChatsByUserId = async (userId: string) => {
+  await requireUser();
+
   return await db.query.chat.findMany({
     where: (chat, { eq }) => eq(chat.userId, userId),
     orderBy: (chat, { desc }) => desc(chat.createdAt),
@@ -40,10 +45,14 @@ export const createChat = async ({
   userId: string;
   title: string;
 }) => {
+  await requireUser();
+
   return await db.insert(chat).values({ id, createdAt, userId, title });
 };
 
 export const getMessagesByChatId = async (chatId: string) => {
+  await requireUser();
+
   return await db.query.message.findMany({
     where: (message, { eq }) => eq(message.chatId, chatId),
     orderBy: (message, { asc }) => asc(message.createdAt),
@@ -51,6 +60,8 @@ export const getMessagesByChatId = async (chatId: string) => {
 };
 
 export const createMessages = async ({ messages }: { messages: Message[] }) => {
+  await requireUser();
+
   return await db.insert(message).values(messages);
 };
 
@@ -61,6 +72,8 @@ export const createStream = async ({
   streamId: string;
   chatId: string;
 }) => {
+  await requireUser();
+
   return await db.insert(stream).values({ id: streamId, chatId });
 };
 
@@ -98,6 +111,8 @@ export const createDocument = async ({
 };
 
 export const getDocumentsById = async (id: string) => {
+  await requireUser();
+
   return await db.query.document.findMany({
     where: (document, { eq }) => eq(document.id, id),
     orderBy: (document, { asc }) => asc(document.createdAt),
@@ -105,6 +120,8 @@ export const getDocumentsById = async (id: string) => {
 };
 
 export const getDocumentById = async (id: string) => {
+  await requireUser();
+
   return await db.query.document.findFirst({
     where: (document, { eq }) => eq(document.id, id),
   });
@@ -117,6 +134,8 @@ export const setDocumentUrl = async ({
   id: string;
   url: string;
 }) => {
+  await requireUser();
+
   return await db
     .update(document)
     .set({ fileUrl: url })
